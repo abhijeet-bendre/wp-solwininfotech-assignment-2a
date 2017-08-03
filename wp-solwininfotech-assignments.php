@@ -19,6 +19,9 @@ class Wp_Solwininfotech_Assignments
 	{
 		add_action( 'admin_menu', array( $this, 'wpsa_add_admin_menu' ));
 		add_action( 'admin_init', array( $this, 'wpsa_settings_init' ));
+		wp_register_style("wpsa_main" , plugin_dir_url( __FILE__ ).'assets/css/wpsa_main.css',null);
+		wp_enqueue_style('wpsa_main');
+
 	}
 
 	function wpsa_add_admin_menu(  ) {
@@ -65,7 +68,10 @@ class Wp_Solwininfotech_Assignments
 					array( $this, 'wpsa_checkbox_field_render' )	,
 					'pluginPage',
 					'wpsa_cpt_checkbox_section',
-					array( 'field_id' => $field_id )
+					array(
+							'field_id' => $field_id,
+							'post_type' => $post_type,
+						 )
 				);
 			}
 			$field_id++;
@@ -84,10 +90,20 @@ class Wp_Solwininfotech_Assignments
 	function wpsa_checkbox_field_render( array $args  ) {
 
 		$field_id   = $args['field_id'];
+		$post_type   = $args['post_type'];
 		$options 		= get_option( 'wpsa_settings' );
 		?>
-		<input type='checkbox' name='<?php echo "wpsa_settings[wpsa_checkbox_field_".$field_id."]"; ?>' <?php checked( $options['wpsa_checkbox_field_'.$field_id], 1 ); ?> value='1'>
+
+		<div class="wpsa_cpt_checkbox">
+			<input type='checkbox' name='<?php echo "wpsa_settings[wpsa_checkbox_field_".$field_id."]"; ?>' <?php checked( $options['wpsa_checkbox_field_'.$field_id], 1 ); ?> value='1'>
+		</div>
+		<div class="<?php echo 'multi_slelect_box wpsa_checkbox_field_'.$field_id; ?>">
+				<select multiple="multiple" size="5" disabled="disabled">
+			  		<option value="">Your <?php echo $post_type; ?>s will be added here </option>
+			  </select>
+		</div>
 		<?php
+
 
 	}
 
