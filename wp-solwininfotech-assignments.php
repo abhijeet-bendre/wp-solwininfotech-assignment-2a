@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Solwininfotech Plugin Assignments
+Plugin Name: Solwin Infotech Plugin Assignments
 Plugin URI:  http://tymescripts.com/solwininfotech
 Description: WordPress Plugin Assignment for Solwininfotech
 Version:     0.1
@@ -17,13 +17,13 @@ class Wp_Solwininfotech_Assignments
 
 	public function __construct()
 	{
-			add_action( 'admin_menu', array( $this, 'wpsa_add_admin_menu' ));
-			add_action( 'admin_init', array( $this, 'wpsa_settings_init' ));
+		add_action( 'admin_menu', array( $this, 'wpsa_add_admin_menu' ));
+		add_action( 'admin_init', array( $this, 'wpsa_settings_init' ));
 	}
 
 	function wpsa_add_admin_menu(  ) {
 
-		add_options_page( 'Solwininfotech Plugin Assignment', 'Solwininfotech Plugin Assignment', 'manage_options', 'wp_solwininfotech_assignment', array( $this, 'wpsa_options_page' ));
+		add_options_page( 'Solwin Infotech Plugin Assignment', 'Solwin Infotech Plugin Assignment', 'manage_options', 'wp_solwininfotech_assignment', array( $this, 'wpsa_options_page' ));
 
 	}
 
@@ -32,9 +32,9 @@ class Wp_Solwininfotech_Assignments
 		register_setting( 'pluginPage', 'wpsa_settings' );
 
 		add_settings_section(
-			'wpsa_pluginPage_section',
-			__( 'Add text which will be displayed as alert on front side', 'wp_solwininfotech_assignment' ),
-			array( $this, 'wpsa_settings_section_callback' ),
+			'wpsa_alert_box_section',
+			__( 'Alert text on front side', 'wp_solwininfotech_assignment' ),
+			array( $this, 'wpsa_alert_box_settings_section_callback' ),
 			'pluginPage'
 		);
 
@@ -43,26 +43,33 @@ class Wp_Solwininfotech_Assignments
 			__( 'Alert Text', 'wp_solwininfotech_assignment' ),
 			array( $this, 'wpsa_alert_text_field_render' ),
 			'pluginPage',
-			'wpsa_pluginPage_section'
+			'wpsa_alert_box_section'
 		);
 
-    	$post_types = get_post_types();
-			$field_id = 0;
-			var_dump( $post_types);
-			foreach ( get_post_types( '', 'names' ) as $post_type ) {
-					if( in_array( $post_type , array( 'post' , 'page' ) ) )
-					{
-						add_settings_field(
-							'wpsa_checkbox_field_'.$field_id,
-							__( $post_type, 'wp_solwininfotech_assignment' ),
-							array( $this, 'wpsa_checkbox_field_render' )	,
-							'pluginPage',
-							'wpsa_pluginPage_section',
-							array( 'field_id' => $field_id )
-						);
-					}
-					$field_id++;
+		add_settings_section(
+			'wpsa_cpt_checkbox_section',
+			__( 'Checkboxes for all custom post types.', 'wp_solwininfotech_assignment' ),
+			array( $this, 'wpsa_cpt_checkbox_settings_section_callback' ),
+			'pluginPage'
+		);
+
+		$post_types = get_post_types();
+		$field_id = 0;
+
+		foreach ( get_post_types( '', 'names' ) as $post_type ) {
+			if( in_array( $post_type , array( 'post' , 'page' ) ) )
+			{
+				add_settings_field(
+					'wpsa_checkbox_field_'.$field_id,
+					__( $post_type, 'wp_solwininfotech_assignment' ),
+					array( $this, 'wpsa_checkbox_field_render' )	,
+					'pluginPage',
+					'wpsa_cpt_checkbox_section',
+					array( 'field_id' => $field_id )
+				);
 			}
+			$field_id++;
+		}
 	}
 
 	function wpsa_alert_text_field_render(  ) {
@@ -84,10 +91,15 @@ class Wp_Solwininfotech_Assignments
 
 	}
 
+	function wpsa_alert_box_settings_section_callback(  ) {
 
-	function wpsa_settings_section_callback(  ) {
+		echo __( 'Add text which will be displayed as alert on front side', 'wp_solwininfotech_assignment' );
 
-		//silence is golden
+	}
+
+	function wpsa_cpt_checkbox_settings_section_callback(  ) {
+
+		echo __( 'Check any of the below post type’s checkbox, all posts of that post type will be listed below in multi-selectbox.', 'wp_solwininfotech_assignment' );
 
 	}
 
@@ -97,7 +109,7 @@ class Wp_Solwininfotech_Assignments
 		?>
 		<form action='options.php' method='post'>
 
-			<h2>Wp_Solwininfotech_Assignment</h2>
+			<h1>Solwin Infotech Assignments</h1>
 
 			<?php
 			settings_fields( 'pluginPage' );
