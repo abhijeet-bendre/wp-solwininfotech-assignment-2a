@@ -2,13 +2,12 @@
 /* Plugin CSS Styles Start Here */
 
 .wpsa_cpt_checkbox {
-
     vertical-align: middle;
     margin-top: 40px;
     display: inline-block;
 }
 
-.multi_slelect_box {
+.wpsa_multi_slelect_box {
     display: inline-block;
-
+    width: 400px;
 }

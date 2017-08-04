@@ -15,7 +15,7 @@ Text Domain: wp_solwininfotech_assignments
 class Wp_Solwininfotech_Assignments
 {
 
-	public function __construct()
+	public function __construct(  )
 	{
 		add_action( 'admin_menu', array( $this, 'wpsa_add_admin_menu' ));
 		add_action( 'admin_init', array( $this, 'wpsa_settings_init' ));
@@ -23,15 +23,18 @@ class Wp_Solwininfotech_Assignments
 
 		/*ajax hooks for handling Chekbox selection */
 		add_action('wp_ajax_wpsa_get_selected_post_types', array($this, 'wpsa_get_selected_post_types'));
-		//add_action('wp_ajax_wpsa_get_selected_post_types', array($this, 'wpsa_get_selected_post_types'));
-		//$this->wpsa_get_selected_post_types( 'post' );
+
 	}
 
 	function wpsa_init_assets(  ) {
 
-		wp_register_style("wpsa_main" , plugin_dir_url( __FILE__ ).'assets/css/wpsa_main.css',null);
-		wp_enqueue_style('wpsa_main');
+		wp_register_style( 'wpsa_main', plugin_dir_url( __FILE__ ).'assets/css/wpsa_main.css',null );
+		wp_enqueue_style( 'wpsa_main' );
 
+		wp_register_script( 'wpsa_main_js', plugin_dir_url( __FILE__ ).'assets/js/wpsa_main.js' );
+		wp_enqueue_script( 'wpsa_main_js',array('jquery') );
+		wp_localize_script( 'wpsa_main_js', 'ajaxurl', admin_url('admin-ajax.php') );
+		wp_localize_script( 'wpsa_main_js', 'site_url', site_url() );
 	}
 
 
@@ -71,6 +74,7 @@ class Wp_Solwininfotech_Assignments
 		$field_id = 0;
 
 		foreach ( get_post_types( '', 'names' ) as $post_type ) {
+
 			if( in_array( $post_type , array( 'post' , 'page' ) ) )
 			{
 				add_settings_field(
@@ -103,19 +107,22 @@ class Wp_Solwininfotech_Assignments
 		$field_id   = $args['field_id'];
 		$post_type   = $args['post_type'];
 		$options 		= get_option( 'wpsa_settings' );
-		//add_action("wpsa_multi_select_field_".$field_id, array( $his, ''));
 		?>
-	  <div class="wpsa_cpt_checkbox">
-			<input type='checkbox' name='<?php echo "wpsa_settings[wpsa_checkbox_field_".$field_id."]"; ?>' <?php if(!empty($options['wpsa_checkbox_field_'.$field_id])) checked( $options['wpsa_checkbox_field_'.$field_id], 1 ); ?> value='1'>
-		</div>
-		<div class="multi_slelect_box">
-				<select  multiple="multiple" name='<?php echo "wpsa_settings[wpsa_multi_select_field_".$field_id."][]"; ?>'>
-					<!-- <option value=''> Your <?php echo $post_type;?>s will be added here </option> -->
-					<?php $this->wpsa_get_selected_post_types( 'post', $field_id ); ?>
-				</select>
-		</div>
-		<?php
 
+		<input type='checkbox' data-post-type='<?php echo $post_type; ?>' name='<?php echo "wpsa_settings[wpsa_checkbox_field_".$field_id."]"; ?>' <?php if(!empty($options['wpsa_checkbox_field_'.$field_id])) checked( $options['wpsa_checkbox_field_'.$field_id], 1 ); ?> value='1'>
+    
+		<select class="wpsa_multi_slelect_box" multiple='multiple' data-field-id='<?php echo $field_id; ?>'
+						name='<?php echo "wpsa_settings[wpsa_multi_select_field_".$field_id."][]"; ?>'
+						<?php if( empty($options['wpsa_checkbox_field_'.$field_id])) { echo 'disabled=disabled'; } ?>">
+				<?php
+					if(!empty($options['wpsa_checkbox_field_'.$field_id]))
+					{
+						$this->wpsa_get_selected_post_types( $post_type, $field_id );
+					}
+				?>
+		</select>
+
+		<?php
 	}
 
 	function wpsa_alert_box_settings_section_callback(  ) {
@@ -126,7 +133,7 @@ class Wp_Solwininfotech_Assignments
 
 	function wpsa_cpt_checkbox_settings_section_callback(  ) {
 
-		echo __( 'Check any of the below post type’s checkbox, all posts of that post type will be listed below in multi-selectbox.', 'wp_solwininfotech_assignment' );
+		echo __( 'Check any of the below post type’s checkbox, all posts of that post type will be listed in multi select box.', 'wp_solwininfotech_assignment' );
 
 	}
 
@@ -145,19 +152,27 @@ class Wp_Solwininfotech_Assignments
 		<?php
 
 	}
-	
-	function wpsa_get_selected_post_types( $post_type, $field_id  ) {
+
+	function wpsa_get_selected_post_types( $post_type = "", $field_id = "" ) {
+
+		if( !empty( $_POST['post_type'] ) && !empty( $_POST['post_type'] ))
+		{
+			$post_type = sanitize_text_field( $_POST['post_type'] );
+			$field_id  = sanitize_text_field( $_POST['field_id'] );
+		}
 
 		$args = array(
-					'post_type'        => $post_type,
-					'post_status'      => 'publish',
-			);
+					'post_type'   => $post_type,
+					'post_status' => 'publish',
+		);
+
 		$posts_types_array = get_posts( $args );
-   	$options 		= get_option( 'wpsa_settings' );
-		$select_options = "";
-		$selected = isset( $options["wpsa_multi_select_field_".$field_id] ) ? $options["wpsa_multi_select_field_".$field_id] : "";
+   	$options 		       = get_option( 'wpsa_settings' );
+		$select_options    = "";
+		$selected          = isset( $options["wpsa_multi_select_field_".$field_id] ) ? $options["wpsa_multi_select_field_".$field_id] : "";
 
 		foreach ($posts_types_array as $pt) {
+
 			$option_value = "wpsa_pt_".$pt->ID;
 			$select_options .= "<option value='".$option_value."' ";
 
@@ -173,6 +188,10 @@ class Wp_Solwininfotech_Assignments
 			$select_options .= "</option>";
 		}
 		echo $select_options;
+		if( !empty( $_POST['post_type'] ) && !empty( $_POST['post_type'] ))
+		{
+			die();
+		}
 	}
 
 	//function wpsa_checkbox_field_render( $post_type ) {
