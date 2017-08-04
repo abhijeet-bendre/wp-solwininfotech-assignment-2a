@@ -19,10 +19,21 @@ class Wp_Solwininfotech_Assignments
 	{
 		add_action( 'admin_menu', array( $this, 'wpsa_add_admin_menu' ));
 		add_action( 'admin_init', array( $this, 'wpsa_settings_init' ));
+		add_action("admin_enqueue_scripts",array($this, 'wpsa_init_assets'));
+
+		/*ajax hooks for handling Chekbox selection */
+		add_action('wp_ajax_wpsa_get_selected_post_types', array($this, 'wpsa_get_selected_post_types'));
+		//add_action('wp_ajax_wpsa_get_selected_post_types', array($this, 'wpsa_get_selected_post_types'));
+		//$this->wpsa_get_selected_post_types( 'post' );
+	}
+
+	function wpsa_init_assets(  ) {
+
 		wp_register_style("wpsa_main" , plugin_dir_url( __FILE__ ).'assets/css/wpsa_main.css',null);
 		wp_enqueue_style('wpsa_main');
 
 	}
+
 
 	function wpsa_add_admin_menu(  ) {
 
@@ -92,18 +103,18 @@ class Wp_Solwininfotech_Assignments
 		$field_id   = $args['field_id'];
 		$post_type   = $args['post_type'];
 		$options 		= get_option( 'wpsa_settings' );
+		//add_action("wpsa_multi_select_field_".$field_id, array( $his, ''));
 		?>
-
-		<div class="wpsa_cpt_checkbox">
-			<input type='checkbox' name='<?php echo "wpsa_settings[wpsa_checkbox_field_".$field_id."]"; ?>' <?php checked( $options['wpsa_checkbox_field_'.$field_id], 1 ); ?> value='1'>
+	  <div class="wpsa_cpt_checkbox">
+			<input type='checkbox' name='<?php echo "wpsa_settings[wpsa_checkbox_field_".$field_id."]"; ?>' <?php if(!empty($options['wpsa_checkbox_field_'.$field_id])) checked( $options['wpsa_checkbox_field_'.$field_id], 1 ); ?> value='1'>
 		</div>
-		<div class="<?php echo 'multi_slelect_box wpsa_checkbox_field_'.$field_id; ?>">
-				<select multiple="multiple" size="5" disabled="disabled">
-			  		<option value="">Your <?php echo $post_type; ?>s will be added here </option>
-			  </select>
+		<div class="multi_slelect_box">
+				<select  multiple="multiple" name='<?php echo "wpsa_settings[wpsa_multi_select_field_".$field_id."][]"; ?>'>
+					<!-- <option value=''> Your <?php echo $post_type;?>s will be added here </option> -->
+					<?php $this->wpsa_get_selected_post_types( 'post', $field_id ); ?>
+				</select>
 		</div>
 		<?php
-
 
 	}
 
@@ -119,14 +130,11 @@ class Wp_Solwininfotech_Assignments
 
 	}
 
-
 	function wpsa_options_page(  ) {
 
 		?>
 		<form action='options.php' method='post'>
-
 			<h1>Solwin Infotech Assignments</h1>
-
 			<?php
 			settings_fields( 'pluginPage' );
 			do_settings_sections( 'pluginPage' );
@@ -137,6 +145,39 @@ class Wp_Solwininfotech_Assignments
 		<?php
 
 	}
+	
+	function wpsa_get_selected_post_types( $post_type, $field_id  ) {
+
+		$args = array(
+					'post_type'        => $post_type,
+					'post_status'      => 'publish',
+			);
+		$posts_types_array = get_posts( $args );
+   	$options 		= get_option( 'wpsa_settings' );
+		$select_options = "";
+		$selected = isset( $options["wpsa_multi_select_field_".$field_id] ) ? $options["wpsa_multi_select_field_".$field_id] : "";
+
+		foreach ($posts_types_array as $pt) {
+			$option_value = "wpsa_pt_".$pt->ID;
+			$select_options .= "<option value='".$option_value."' ";
+
+			if( $selected !== "" )
+			{
+					if(in_array( $option_value, $selected ))
+					{
+						$select_options .= "selected=selected ";
+					}
+			}
+			$select_options .="'>";
+			$select_options .=  $pt->post_title;
+			$select_options .= "</option>";
+		}
+		echo $select_options;
+	}
+
+	//function wpsa_checkbox_field_render( $post_type ) {
+
+	//}
 
 }
 
