@@ -14,6 +14,7 @@ Text Domain: wp_solwininfotech_assignments
 
 class Wp_Solwininfotech_Assignments
 {
+	private $multiselect_option_prefix  = "wpsa_pt_";
 
 	public function __construct(  )
 	{
@@ -23,7 +24,7 @@ class Wp_Solwininfotech_Assignments
 
 		/*ajax hooks for handling Chekbox selection */
 		add_action('wp_ajax_wpsa_get_selected_post_types', array($this, 'wpsa_get_selected_post_types'));
-
+		add_action( 'wp_head', array( $this, 'alert_box_front_end' ));
 	}
 
 	function wpsa_init_assets(  ) {
@@ -84,9 +85,9 @@ class Wp_Solwininfotech_Assignments
 					'pluginPage',
 					'wpsa_cpt_checkbox_section',
 					array(
-							'field_id' => $field_id,
-							'post_type' => $post_type,
-						 )
+						'field_id' => $field_id,
+						'post_type' => $post_type,
+					)
 				);
 			}
 			$field_id++;
@@ -97,7 +98,7 @@ class Wp_Solwininfotech_Assignments
 
 		$options = get_option( 'wpsa_settings' );
 		?>
-		<input type='text' name='wpsa_settings[wpsa_text_field_0]' value='<?php echo $options['wpsa_text_field_0']; ?>'>
+		<input type='text' name='wpsa_settings[wpsa_alert_text_field]' value='<?php echo $options['wpsa_alert_text_field']; ?>'>
 		<?php
 
 	}
@@ -110,16 +111,16 @@ class Wp_Solwininfotech_Assignments
 		?>
 
 		<input type='checkbox' data-post-type='<?php echo $post_type; ?>' name='<?php echo "wpsa_settings[wpsa_checkbox_field_".$field_id."]"; ?>' <?php if(!empty($options['wpsa_checkbox_field_'.$field_id])) checked( $options['wpsa_checkbox_field_'.$field_id], 1 ); ?> value='1'>
-    
+
 		<select class="wpsa_multi_slelect_box" multiple='multiple' data-field-id='<?php echo $field_id; ?>'
-						name='<?php echo "wpsa_settings[wpsa_multi_select_field_".$field_id."][]"; ?>'
-						<?php if( empty($options['wpsa_checkbox_field_'.$field_id])) { echo 'disabled=disabled'; } ?>">
-				<?php
-					if(!empty($options['wpsa_checkbox_field_'.$field_id]))
-					{
-						$this->wpsa_get_selected_post_types( $post_type, $field_id );
-					}
-				?>
+			name='<?php echo "wpsa_settings[wpsa_multi_select_field_".$post_type."][]"; ?>'
+			<?php if( empty($options['wpsa_checkbox_field_'.$field_id])) { echo 'disabled=disabled'; } ?>">
+			<?php
+			if(!empty($options['wpsa_checkbox_field_'.$field_id]))
+			{
+				$this->wpsa_get_selected_post_types( $post_type, $field_id );
+			}
+			?>
 		</select>
 
 		<?php
@@ -141,7 +142,7 @@ class Wp_Solwininfotech_Assignments
 
 		?>
 		<form action='options.php' method='post'>
-			<h1>Solwin Infotech Assignments</h1>
+			<h1>Solwin Infotech Assignment-2a: Simple Alert Plugin</h1>
 			<?php
 			settings_fields( 'pluginPage' );
 			do_settings_sections( 'pluginPage' );
@@ -162,26 +163,26 @@ class Wp_Solwininfotech_Assignments
 		}
 
 		$args = array(
-					'post_type'   => $post_type,
-					'post_status' => 'publish',
+			'post_type'   => $post_type,
+			'post_status' => 'publish',
 		);
 
 		$posts_types_array = get_posts( $args );
-   	$options 		       = get_option( 'wpsa_settings' );
 		$select_options    = "";
-		$selected          = isset( $options["wpsa_multi_select_field_".$field_id] ) ? $options["wpsa_multi_select_field_".$field_id] : "";
+		$options 		       = get_option( 'wpsa_settings' );
+		$selected          = isset( $options["wpsa_multi_select_field_".$post_type] ) ? $options["wpsa_multi_select_field_".$post_type] : "";
 
 		foreach ($posts_types_array as $pt) {
 
-			$option_value = "wpsa_pt_".$pt->ID;
+			$option_value = $this->multiselect_option_prefix.$pt->ID;
 			$select_options .= "<option value='".$option_value."' ";
 
 			if( $selected !== "" )
 			{
-					if(in_array( $option_value, $selected ))
-					{
-						$select_options .= "selected=selected ";
-					}
+				if(in_array( $option_value, $selected ))
+				{
+					$select_options .= "selected=selected ";
+				}
 			}
 			$select_options .="'>";
 			$select_options .=  $pt->post_title;
@@ -194,9 +195,34 @@ class Wp_Solwininfotech_Assignments
 		}
 	}
 
-	//function wpsa_checkbox_field_render( $post_type ) {
+	function alert_box_front_end() {
 
-	//}
+		global $post;
+
+		if ( !is_admin() ) {
+
+				$options 	  = get_option( 'wpsa_settings' );
+				$alert_text = $options['wpsa_alert_text_field'];
+
+				foreach( $options as $option_key => $option_value) {
+
+					if(strpos( $option_key , $post->post_type) ) {
+
+						$saved_pt_for_alert = $options["wpsa_multi_select_field_".$post->post_type];
+					if( in_array( $this->multiselect_option_prefix.$post->ID, $saved_pt_for_alert ) )
+					{
+					?>
+						<script>
+							alert( "<?php echo $alert_text; ?>" );
+						</script>
+					<?php
+					}
+
+				}
+			}
+
+		}
+	}
 
 }
 
