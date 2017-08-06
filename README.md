@@ -31,7 +31,7 @@ Plugin for Assignment 2a from here: https://www.solwininfotech.com/career/wordpr
 1. Upload the entire `wp-solwininfotech-assignment-2a` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
-You will find 'Solwin Infotech Plugin Assignment 2a' menu in your WordPress admin panel under **Settings** menu.
+You will find 'Solwin Infotech Plugin Assignment 2a' menu in your WordPress admin panel under **Setting** menu.
 
  
 == Changelog ==
