@@ -1,18 +1,18 @@
 <?php
 /*
-Plugin Name: Solwin Infotech Plugin Assignments
+Plugin Name: Solwin Infotech Plugin Assignment-2a
 Plugin URI:  http://tymescripts.com/solwininfotech
-Description: WordPress Plugin Assignment for Solwininfotech
+Description: Solwin Infotech Assignment-2a: Simple Alert Plugin
 Version:     0.1
 Author:      Abhijeet Bendre
 Author URI:  http://tymescripts.com
 License:     GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Domain Path: /languages
-Text Domain: wp_solwininfotech_assignments
+Text Domain: wp_solwininfotech_assignment_2a
 */
 
-class Wp_Solwininfotech_Assignments
+class Wp_Solwininfotech_Assignment_2a
 {
 	private $multiselect_option_prefix  = "wpsa_pt_";
 
@@ -41,7 +41,7 @@ class Wp_Solwininfotech_Assignments
 
 	function wpsa_add_admin_menu(  ) {
 
-		add_options_page( 'Solwin Infotech Plugin Assignment', 'Solwin Infotech Plugin Assignment', 'manage_options', 'wp_solwininfotech_assignment', array( $this, 'wpsa_options_page' ));
+		add_options_page( 'Solwin Infotech Plugin Assignment 2a', 'Solwin Infotech Plugin Assignment 2a', 'manage_options', 'wp_solwininfotech_assignment', array( $this, 'wpsa_options_page' ));
 
 	}
 
@@ -226,4 +226,4 @@ class Wp_Solwininfotech_Assignments
 
 }
 
-new Wp_Solwininfotech_Assignments();
+new Wp_Solwininfotech_Assignment_2a();
