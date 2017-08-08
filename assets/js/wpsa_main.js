@@ -1,6 +1,7 @@
+
 jQuery(document).ready(function(){
-  "use strict";
-  jQuery(":checkbox").change(function() {
+  'use strict';
+  jQuery(':checkbox').change(function() {
 
     var multi_select = jQuery(this).next() ;
 
@@ -10,7 +11,7 @@ jQuery(document).ready(function(){
         'post_type' : jQuery(this).data('post-type'),
         'field_id'  : multi_select.data('field-id')
       };
-      if( data.post_type !== "" &&  data.field_id !== "" )
+      if( data.post_type !== '' &&  data.field_id !== '' )
       {
         jQuery.post(ajaxurl, data, function(response) {
           multi_select.prop('disabled', false);
@@ -19,10 +20,10 @@ jQuery(document).ready(function(){
       }
     }
     else {
-      if( multi_select.has('option').length == 0 ) {
+      if( multi_select.has('option').length === 0 ) {
         multi_select.prop('disabled', true);
       }
-      multi_select.html("");
+      multi_select.html('');
     }
   });
 });
