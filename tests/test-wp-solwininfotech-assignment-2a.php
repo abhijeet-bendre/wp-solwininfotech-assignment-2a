@@ -15,7 +15,7 @@ class Wp_Solwininfotech_Assignment_2a_Test extends WP_UnitTestCase {
 	 *
 	 * @var string private
 	 */
-	 private $wpsa_alert_text_field = 'Assignment-2a: Simple Alert Plugin';
+	private $wpsa_alert_text_field = 'Assignment-2a: Simple Alert Plugin';
 
 	/**
 	 * Test if Plugin is active.
@@ -66,6 +66,17 @@ class Wp_Solwininfotech_Assignment_2a_Test extends WP_UnitTestCase {
 		update_option( 'wpsa_alert_text_field', $_POST['wpsa_alert_text_field'] );
 		$this->assertEquals( $this->wpsa_alert_text_field, get_option( 'wpsa_alert_text_field' ) );
 	}
+
+	/**
+	 * Test if checked option is saved.
+	 */
+	public function test_check_box_is_saved() {
+		// Simulate $_POST check box variable (checked value is 1).
+		$_POST['wpsa_alert_text_field_1'] = 1;
+		update_option( 'wpsa_alert_text_field_1', $_POST['wpsa_alert_text_field_1'] );
+		$this->assertEquals( 1, get_option( 'wpsa_alert_text_field_1' ) );
+	}
+
 
 
 }
