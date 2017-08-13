@@ -242,7 +242,6 @@ class Wp_Solwininfotech_Assignment_2a {
 			'post_type'   => $post_type,
 			'post_status' => 'publish',
 		);
-
 		$select_options    = '';
 		$posts_types_array = new \WP_Query( $args );
 		$options           = get_option( 'wpsa_settings' );
@@ -252,10 +251,10 @@ class Wp_Solwininfotech_Assignment_2a {
 
 		foreach ( $posts_types_array as $pt ) {
 			$option_value = $this->multiselect_option_prefix . $pt->ID;
-			$select_options .= "<option value='" . esc_attr( $option_value ) . "' ";
+			$select_options .= "<option value='" . esc_attr( $option_value ) . "'";
 			if ( '' !== $selected ) {
 				if ( in_array( $option_value, $selected, true ) ) {
-					$select_options .= 'selected=selected';
+					$select_options .= ' selected=selected';
 				}
 			}
 			$select_options .= '>';
@@ -264,7 +263,7 @@ class Wp_Solwininfotech_Assignment_2a {
 		}
 		echo $select_options; // WPCS: XSS ok.
 		if ( $ajax_call_flag ) {
-			die();
+			wp_die();
 		}
 	}
 
