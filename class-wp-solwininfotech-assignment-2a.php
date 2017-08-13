@@ -19,17 +19,17 @@ Domain Path: /languages
 Text Domain: wp_solwininfotech_assignment_2a
 */
 
-namespace  Wp_Solwininfotech_Assignment_2b;
+	namespace  Wp_Solwininfotech_Assignment_2b;
 
-// Exit if accessed directly.
-defined( 'ABSPATH' ) || exit;
+	// Exit if accessed directly.
+	defined( 'ABSPATH' ) || exit;
 
-/* Global variables and constants */
-global $wpsa_2b_db_version;
-$wpsa_2b_db_version = '1.0';
+	/* Global variables and constants */
+	global $wpsa_2b_db_version;
+	$wpsa_2b_db_version = '1.0';
 
-define( 'WPSA_2A_PLUGIN_NAME', 'wp-solwininfotech-assignment-2a' );
-define( 'WPSA_2A_PLUGIN_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
+	define( 'WPSA_2A_PLUGIN_NAME', 'wp-solwininfotech-assignment-2a' );
+	define( 'WPSA_2A_PLUGIN_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 /**
  * Solwininfotech Assignment 2a Class.
@@ -66,13 +66,13 @@ class Wp_Solwininfotech_Assignment_2a {
 	 *
 	 * @since 0.1
 	 */
-	function wpsa_init_assets() {
+	public function wpsa_init_assets() {
 		wp_register_style( 'wpsa_main', plugin_dir_url( __FILE__ ) . 'assets/css/wpsa_main.css',null );
 		wp_enqueue_style( 'wpsa_main' );
 		wp_register_script( 'wpsa_main_js', plugin_dir_url( __FILE__ ) . 'assets/js/wpsa_main.js' );
 		wp_enqueue_script( 'wpsa_main_js', array( 'jquery' ) );
 		wp_localize_script( 'wpsa_main_js', 'ajaxurl', admin_url( 'admin-ajax.php' ) );
-		wp_localize_script( 'wpsa_main_js', 'site_url', site_url() );
+		wp_localize_script( 'wpsa_main_js', 'wpsa_ajax_nonce', wp_create_nonce( 'checkbox_post_type' ) );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class Wp_Solwininfotech_Assignment_2a {
 	 *
 	 * @since 0.1
 	 */
-	function wpsa_add_admin_menu() {
+	public function wpsa_add_admin_menu() {
 		add_options_page( 'Solwin Infotech Plugin Assignment 2a', 'Solwin Infotech Plugin Assignment 2a', 'manage_options', 'wp_solwininfotech_assignment', array( $this, 'wpsa_options_page' ) );
 	}
 
@@ -90,7 +90,7 @@ class Wp_Solwininfotech_Assignment_2a {
 	 *
 	 * @since 0.1
 	 */
-	function wpsa_settings_init() {
+	public function wpsa_settings_init() {
 		$field_id = 0;
 
 		register_setting( 'simple_alert', 'wpsa_settings' );
@@ -141,7 +141,7 @@ class Wp_Solwininfotech_Assignment_2a {
 	 *
 	 * @since 0.1
 	 */
-	function wpsa_alert_text_field_render() {
+	public function wpsa_alert_text_field_render() {
 		$options = get_option( 'wpsa_settings' );
 		?>
 		<input type='text' name='wpsa_settings[wpsa_alert_text_field]' value='<?php echo esc_html( $options['wpsa_alert_text_field'] ); ?>'>
@@ -154,7 +154,7 @@ class Wp_Solwininfotech_Assignment_2a {
 	 * @param array $args cf7 form.
 	 * @since 0.1
 	 */
-	function wpsa_checkbox_field_render( array $args ) {
+	public function wpsa_checkbox_field_render( array $args ) {
 
 		$field_id   = $args['field_id'];
 		$post_type  = $args['post_type'];
@@ -188,7 +188,7 @@ class Wp_Solwininfotech_Assignment_2a {
 	 *
 	 * @since 0.1
 	 */
-	function wpsa_alert_box_settings_section_callback() {
+	public function wpsa_alert_box_settings_section_callback() {
 		esc_html_e( 'Add text which will be displayed as alert on front side', 'wp_solwininfotech_assignment' );
 	}
 
@@ -197,7 +197,7 @@ class Wp_Solwininfotech_Assignment_2a {
 	 *
 	 * @since 0.1
 	 */
-	function wpsa_cpt_checkbox_settings_section_callback() {
+	public function wpsa_cpt_checkbox_settings_section_callback() {
 		esc_html_e( 'Check any of the below post type’s checkbox, all posts of that post type will be listed in multi select box.', 'wp_solwininfotech_assignment' );
 	}
 
@@ -206,11 +206,11 @@ class Wp_Solwininfotech_Assignment_2a {
 	 *
 	 * @since 0.1
 	 */
-	function wpsa_options_page() {
+	public function wpsa_options_page() {
 
 		?>
 		<form action='options.php' method='post'>
-			<h1>Solwin Infotech Assignment-2a: Simple Alert Plugin</h1>
+			<h2>Solwin Infotech Assignment-2a: Simple Alert Plugin</h2>
 			<?php
 			settings_fields( 'simple_alert' );
 			do_settings_sections( 'simple_alert' );
@@ -231,12 +231,13 @@ class Wp_Solwininfotech_Assignment_2a {
 	 */
 	function wpsa_get_selected_post_types( $post_type = '', $field_id = '' ) {
 
-		if ( ! empty( $_POST['post_type'] ) && ! empty( $_POST['post_type'] ) ) { // Input var okay.
-			$post_type = sanitize_text_field( wp_unslash( $_POST['post_type'] ) ); // Input var okay; sanitization okay.
+		// checks for POST data coming frm ajax
+		if ( isset( $_POST['field_id'], $_POST['checked_post_type'], $_POST['wpsa_ajax_nonce'] ) && wp_verify_nonce( sanitize_key( $_POST['wpsa_ajax_nonce'] ), 'checkbox_post_type' ) ) { // Input var okay.sanitization okay.
+			$post_type = sanitize_text_field( wp_unslash( $_POST['checked_post_type'] ) ); // Input var okay; sanitization okay.
 			// @codingStandardsIgnoreLine
 			$field_id  = sanitize_text_field( wp_unslash( $_POST['field_id'] ) ); // Input var okay; sanitization okay.
+			$ajax_call_flag = true;
 		}
-
 		$args = array(
 			'post_type'   => $post_type,
 			'post_status' => 'publish',
@@ -244,15 +245,14 @@ class Wp_Solwininfotech_Assignment_2a {
 
 		$select_options    = '';
 		$posts_types_array = new \WP_Query( $args );
-
 		$options           = get_option( 'wpsa_settings' );
 		$selected          = isset( $options[ "wpsa_multi_select_field_$post_type" ] ) ? $options[ "wpsa_multi_select_field_$post_type" ] : '';
 
 		$posts_types_array = $posts_types_array->posts;
+
 		foreach ( $posts_types_array as $pt ) {
 			$option_value = $this->multiselect_option_prefix . $pt->ID;
 			$select_options .= "<option value='" . esc_attr( $option_value ) . "' ";
-
 			if ( '' !== $selected ) {
 				if ( in_array( $option_value, $selected, true ) ) {
 					$select_options .= 'selected=selected';
@@ -262,15 +262,14 @@ class Wp_Solwininfotech_Assignment_2a {
 			$select_options .= $pt->post_title;
 			$select_options .= '</option> ';
 		}
-
 		echo $select_options; // WPCS: XSS ok.
-		if ( ! empty( $_POST['post_type'] ) && ! empty( $_POST['post_type'] ) ) { // Input var okay; sanitization okay.
+		if ( $ajax_call_flag ) {
 			die();
 		}
 	}
 
 	/**
-	 * Popuups alert box front end
+	 * Popups alert box front end
 	 *
 	 * @since 0.1
 	 */

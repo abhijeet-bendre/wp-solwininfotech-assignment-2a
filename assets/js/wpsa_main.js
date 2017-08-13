@@ -4,12 +4,12 @@ jQuery(document).ready(function(){
   jQuery(':checkbox').change(function() {
 
     var multi_select = jQuery(this).next() ;
-
     if(this.checked) {
       var data = {
         'action'    : 'wpsa_get_selected_post_types',
-        'post_type' : jQuery(this).data('post-type'),
-        'field_id'  : multi_select.data('field-id')
+        'checked_post_type' : jQuery(this).data('post-type'),
+        'field_id'  : multi_select.data('field-id'),
+        'wpsa_ajax_nonce' : wpsa_ajax_nonce
       };
       if( data.post_type !== '' &&  data.field_id !== '' )
       {

@@ -10,4 +10,6 @@
 .wpsa_multi_slelect_box {
     display: inline-block;
     width: 400px;
+    height: auto !important;
 }
+
