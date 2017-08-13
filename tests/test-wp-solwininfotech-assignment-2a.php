@@ -70,7 +70,8 @@ class Wp_Solwininfotech_Assignment_2a_Test extends WP_UnitTestCase {
 	public function test_alert_text_option_is_saved() {
 		// Simulate $_POST variable.
 		$_POST['wpsa_alert_text_field'] = $this->wpsa_alert_text_field;
-		update_option( 'wpsa_settings', array( $_POST['wpsa_alert_text_field'] ) );
+		// @codingStandardsIgnoreLine
+		update_option( 'wpsa_settings', array( $_POST['wpsa_alert_text_field'] ) ); // Input var okay; sanitization okay.; WPCS: XSS ok.
 		$this->assertContains( $this->wpsa_alert_text_field, get_option( 'wpsa_settings' ) );
 	}
 
@@ -80,7 +81,8 @@ class Wp_Solwininfotech_Assignment_2a_Test extends WP_UnitTestCase {
 	public function test_check_box_is_saved() {
 		// Simulate $_POST check box variable (checked value is 1).
 		$_POST['wpsa_checkbox_field_1'] = 1;
-		update_option( 'wpsa_settings', array( $_POST['wpsa_checkbox_field_1'] ) );
+		// @codingStandardsIgnoreLine
+		update_option( 'wpsa_settings', array( $_POST['wpsa_checkbox_field_1'] ) ); // Input var okay; sanitization okay.
 		$this->assertContains( 1, get_option( 'wpsa_settings' ) );
 	}
 
@@ -113,8 +115,8 @@ class Wp_Solwininfotech_Assignment_2a_Test extends WP_UnitTestCase {
 
 		// Simulate $_POST variable.
 		$_POST[ $this->multiselect_name ] = $posts_types_array;
-
-		update_option( 'wpsa_settings', array( $_POST[ $this->multiselect_name ] ) );
+		// @codingStandardsIgnoreLine
+		update_option( 'wpsa_settings', array( $_POST[ $this->multiselect_name ] ) ); // Input var okay; sanitization okay.
 		$this->assertContains( $posts_types_array, get_option( 'wpsa_settings' ) );
 	}
 
@@ -147,8 +149,8 @@ class Wp_Solwininfotech_Assignment_2a_Test extends WP_UnitTestCase {
 
 		// Simulate $_POST variable.
 		$_POST[ $this->multiselect_name ] = $page_post_type_array;
-
-		update_option( 'wpsa_settings', array( $_POST[ $this->multiselect_name ] ) );
+		// @codingStandardsIgnoreLine
+		update_option( 'wpsa_settings', array( $_POST[ $this->multiselect_name ] ) ); // Input var okay; sanitization okay.
 		$this->assertContains( $page_post_type_array, get_option( 'wpsa_settings' ) );
 	}
 }

@@ -5,12 +5,12 @@
  * @package Wp_Solwininfotech_Assignment_2a
  */
 
-	/**
-	 * Ajax Test case for Assignment-2a: Simple Alert Plugin.
-	 *
-	 * @group ajax
-	 */
-class Wp_Solwininfotech_Assignment_2a_Ajax_Test extends WP_Ajax_UnitTestCase  {
+/**
+ * Ajax Test case for Assignment-2a: Simple Alert Plugin.
+ *
+ * @group ajax
+ */
+class Wp_Solwininfotech_Assignment_2a_Ajax_Test extends WP_Ajax_UnitTestCase {
 
 	/**
 	 * Prefix for Multiselect Option boxes
@@ -48,7 +48,8 @@ class Wp_Solwininfotech_Assignment_2a_Ajax_Test extends WP_Ajax_UnitTestCase  {
 		try {
 			$this->_handleAjax( 'wpsa_get_selected_post_types' );
 			$this->fail( 'Expected exception: WPAjaxDieContinueException' );
-		} catch ( WPAjaxDieContinueException $e ) {
+		} // @codingStandardsIgnoreLine
+		catch ( WPAjaxDieContinueException $e ) {
 				 // We expected this, do nothing.
 		}
 
@@ -101,7 +102,8 @@ class Wp_Solwininfotech_Assignment_2a_Ajax_Test extends WP_Ajax_UnitTestCase  {
 		try {
 			$this->_handleAjax( 'wpsa_get_selected_post_types' );
 			$this->fail( 'Expected exception: WPAjaxDieContinueException' );
-		} catch ( WPAjaxDieContinueException $e ) {
+		} // @codingStandardsIgnoreLine
+		catch ( WPAjaxDieContinueException $e ) {
 				 // We expected this, do nothing.
 		}
 
