@@ -11,7 +11,7 @@ Plugin for Assignment 2a from here: https://www.solwininfotech.com/career/wordpr
 
 ##  Admin-Side:
 
-    Create an admin-side page under **settings tab**. This page contains following fields those are available with next points.
+    Creates an admin-side page under **settings tab**. This page contains following fields,
     1. Text field for adding text which will be displayed as alert on front side.
     2. Checkboxes for all custom post types. For ex:
     ..* posts
