@@ -28,5 +28,5 @@
     "jquery"        : true,    // jQuery
 
     // Custom Globals
-    "globals"      : { "ajaxurl" : true }
+    "globals"      : { "ajaxurl" : true, "wpsa_ajax_nonce" : false}
 }

@@ -67,12 +67,12 @@ class Wp_Solwininfotech_Assignment_2a {
 	 * @since 0.1
 	 */
 	public function wpsa_init_assets() {
-		wp_register_style( 'wpsa_main', plugin_dir_url( __FILE__ ) . 'assets/css/wpsa_main.css',null );
-		wp_enqueue_style( 'wpsa_main' );
-		wp_register_script( 'wpsa_main_js', plugin_dir_url( __FILE__ ) . 'assets/js/wpsa_main.js' );
-		wp_enqueue_script( 'wpsa_main_js', array( 'jquery' ) );
-		wp_localize_script( 'wpsa_main_js', 'ajaxurl', admin_url( 'admin-ajax.php' ) );
-		wp_localize_script( 'wpsa_main_js', 'wpsa_ajax_nonce', wp_create_nonce( 'checkbox_post_type' ) );
+		wp_register_style( 'wpsa_main_2a', plugin_dir_url( __FILE__ ) . 'assets/css/wpsa_main.css',null );
+		wp_enqueue_style( 'wpsa_main_2a' );
+		wp_register_script( 'wpsa_main_2a_js', plugin_dir_url( __FILE__ ) . 'assets/js/wpsa_main.js' );
+		wp_enqueue_script( 'wpsa_main_2a_js', array( 'jquery' ) );
+		wp_localize_script( 'wpsa_main_2a_js', 'ajaxurl', admin_url( 'admin-ajax.php' ) );
+		wp_localize_script( 'wpsa_main_2a_js', 'wpsa_ajax_nonce', wp_create_nonce( 'checkbox_post_type' ) );
 	}
 
 	/**
@@ -229,8 +229,9 @@ class Wp_Solwininfotech_Assignment_2a {
 	 *
 	 * @since 0.1
 	 */
-	function wpsa_get_selected_post_types( $post_type = '', $field_id = '' ) {
+	public function wpsa_get_selected_post_types( $post_type = '', $field_id = '' ) {
 
+		$ajax_call_flag = false;
 		// checks for POST data coming frm ajax
 		if ( isset( $_POST['field_id'], $_POST['checked_post_type'], $_POST['wpsa_ajax_nonce'] ) && wp_verify_nonce( sanitize_key( $_POST['wpsa_ajax_nonce'] ), 'checkbox_post_type' ) ) { // Input var okay.sanitization okay.
 			$post_type = sanitize_text_field( wp_unslash( $_POST['checked_post_type'] ) ); // Input var okay; sanitization okay.

@@ -1,5 +1,5 @@
-
 jQuery(document).ready(function(){
+  /** global: wpsa_ajax_nonce */
   'use strict';
   jQuery(':checkbox').change(function() {
 
